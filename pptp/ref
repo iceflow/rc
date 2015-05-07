@@ -1,0 +1,24 @@
+RD8:/var/conf # cat pptpd.conf 
+option /var/conf/pptpdopt.conf
+speed 115200
+localip 192.168.100.1
+remoteip 192.168.0.201-210
+stimeout 300
+RD8:/var/conf # cat /var/conf/pptpdopt.conf 
+lock
+name pptpd
+proxyarp
+require-mschap-v2
+require-mppe
+nobsdcomp
+nodeflate
+mtu 1300
+mru 1300
+lcp-echo-failure 10
+lcp-echo-interval 10
+RD8:/var/conf # cat /var/conf/chap-secrets 
+"16300" *       "16300" *
+"ctnet@mycdma.cn"       *       "vnet.mobi"     *
+RD8:/var/conf # cat /var/conf/pap-secrets 
+"16300" *       "16300" *
+"ctnet@mycdma.cn"       *       "vnet.mobi"     *
