@@ -1,0 +1,8 @@
+bash /etc/setup-vpn.sh
+
+
+
+bash /etc/openvpn/startup.sh
+
+
+exit 0
