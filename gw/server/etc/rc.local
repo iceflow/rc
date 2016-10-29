@@ -11,4 +11,9 @@
 #
 # By default this script does nothing.
 
+
+iptables-restore /etc/iptables.conf
+
+echo 1 > /proc/sys/net/ipv4/ip_forward
+
 exit 0
