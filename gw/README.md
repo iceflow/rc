@@ -2,8 +2,8 @@
 
 Access Clients (l2tp/IPsec) <-> China Access Point <--- OpenVPN tun tunnel --> Global Access Point --> Global Resources
 
-
-# China Access Point:
+# 1. Components
+## 1) China Access Point:
 OS: Ubuntu 14.04.3 LTS
 ```Bash
 1. xl2tpd
@@ -13,14 +13,14 @@ OS: Ubuntu 14.04.3 LTS
 5. route control scripts
 ```
 
-# Global Access Point
+## 2) Global Access Point
 OS: Ubuntu 14.04.3 LTS
 ```Bash
 1. OpenVPN Server
 2. iptables rules: NAT plicy
 ```
 
-# Ref:
+# 2. References:
 * xl2tpd:
   * https://github.com/xelerance/xl2tpd
 * OpenSwan:
@@ -30,8 +30,8 @@ OS: Ubuntu 14.04.3 LTS
   * https://openvpn.net/index.php/open-source/documentation/howto.html
   * https://openvpn.net/index.php/open-source/documentation/howto.html#examples
 
-# Progress
-## 1. Global Access Point Setup
+# 3. Progresses
+## 1) Global Access Point Setup
 * Install OpenVPN Server
 ```Bash
 # Installation
@@ -72,10 +72,10 @@ iptables -t nat -A POSTROUTING -s 10.8.0.0/24 -o eth0 -j MASQUERADE
   * /etc/rc.local
   * rc3.d services
   
-  # 2. China Access Point Setup
-  # 3. Access Clients Setup
+## 2) China Access Point Setup
+## 3) Access Clients Setup
 
-# Others:
+# 4. Others:
 l2tp/IPSec quick guide
 https://github.com/sockeye44/instavpn
 https://raymii.org/s/tutorials/IPSEC_L2TP_vpn_with_Ubuntu_14.04.html#Configure_xl2tpd
