@@ -3,7 +3,7 @@
 Access Clients (l2tp/IPsec) <-> China Access Point <--- OpenVPN tun tunnel --> Global Access Point --> Global Resources
 
 * China Access Point:
-``Bash
+```Bash
 Local Subnet: 172.31.0.0/20
 Mobile pool: 172.16.1.0/24
 openvpn subnet: 10.8.0.0/24
