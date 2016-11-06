@@ -5,7 +5,7 @@ Access Clients (l2tp/IPsec) <-> China Access Point <--- OpenVPN tun tunnel --> G
 
 # China Access Point:
 OS: Ubuntu 14.04.3 LTS
-``` Bash
+```Bash
 1. xl2tpd
 2. openswan
 3. OpenVpn Client
@@ -15,7 +15,7 @@ OS: Ubuntu 14.04.3 LTS
 
 # Global Access Point
 OS: Ubuntu 14.04.3 LTS
-``` Bash
+```Bash
 1. OpenVPN Server
 2. iptables rules: NAT plicy
 ```
@@ -33,12 +33,37 @@ OS: Ubuntu 14.04.3 LTS
 # Progress
 * Global Access Point Setup
 	* Install OpenVPN Server
-``` Bash
+```Bash
 # Installation
 apt-get install openvpn
 ```
 	* Generate Server and Clients CAs
 		* ref: https://openvpn.net/index.php/open-source/documentation/howto.html#pki
+	* OpenVPN Server configuration files
+```Bash
+# cat /etc/openvpn/server.conf
+port 1194
+proto udp
+dev tun
+ca ca.crt
+cert server.crt
+key server.key  # This file should be kept secret
+dh dh2048.pem
+topology subnet
+server 10.8.0.0 255.255.255.0
+ifconfig-pool-persist ipp.txt
+duplicate-cn
+keepalive 10 120
+comp-lzo
+persist-key
+persist-tun
+status openvpn-status.log
+verb 3
+```
+	* Start openvpn server
+```Bash
+# service openvpn start
+```
 	* iptables NAT rules
 ``` Bash
 iptables -t nat -A POSTROUTING -s 10.8.0.0/24 -o eth0 -j MASQUERADE
