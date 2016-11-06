@@ -22,24 +22,24 @@ OS: Ubuntu 14.04.3 LTS
 
 # Ref:
 * xl2tpd:
-	* https://github.com/xelerance/xl2tpd
+  * https://github.com/xelerance/xl2tpd
 * OpenSwan:
-	* https://github.com/xelerance/openswan
+  * https://github.com/xelerance/openswan
 * OpenVPN:
-	* https://help.ubuntu.com/community/OpenVPN
-	* https://openvpn.net/index.php/open-source/documentation/howto.html
-	* https://openvpn.net/index.php/open-source/documentation/howto.html#examples
+  * https://help.ubuntu.com/community/OpenVPN
+  * https://openvpn.net/index.php/open-source/documentation/howto.html
+  * https://openvpn.net/index.php/open-source/documentation/howto.html#examples
 
 # Progress
-* Global Access Point Setup
-	* Install OpenVPN Server
+## 1. Global Access Point Setup
+* Install OpenVPN Server
 ```Bash
 # Installation
 apt-get install openvpn
 ```
-	* Generate Server and Clients CAs
-		* ref: https://openvpn.net/index.php/open-source/documentation/howto.html#pki
-	* OpenVPN Server configuration files
+* Generate Server and Clients CAs
+  * ref: https://openvpn.net/index.php/open-source/documentation/howto.html#pki
+* OpenVPN Server configuration files
 ```Bash
 # cat /etc/openvpn/server.conf
 port 1194
@@ -60,19 +60,20 @@ persist-tun
 status openvpn-status.log
 verb 3
 ```
-	* Start openvpn server
+* Start openvpn server
 ```Bash
 # service openvpn start
 ```
-	* iptables NAT rules
+* iptables NAT rules
 ``` Bash
 iptables -t nat -A POSTROUTING -s 10.8.0.0/24 -o eth0 -j MASQUERADE
 ```
-	* Adding to OS bootstrap
-		* /etc/rc.local
-		* rc3.d services
-* China Access Point Setup
-* Access Clients Setup
+* Adding to OS bootstrap
+  * /etc/rc.local
+  * rc3.d services
+  
+  # 2. China Access Point Setup
+  # 3. Access Clients Setup
 
 # Others:
 l2tp/IPSec quick guide
