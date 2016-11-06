@@ -2,6 +2,17 @@
 
 Access Clients (l2tp/IPsec) <-> China Access Point <--- OpenVPN tun tunnel --> Global Access Point --> Global Resources
 
+* China Access Point:
+``Bash
+Local Subnet: 172.31.0.0/20
+Mobile pool: 172.16.1.0/24
+openvpn subnet: 10.8.0.0/24
+```
+* Global Access Point:
+```Bash
+Local Subnet: 192.168.0.0/24
+```
+
 # 1. Components
 ## 1) China Access Point:
 OS: Ubuntu 14.04.3 LTS
@@ -73,41 +84,134 @@ iptables -t nat -A POSTROUTING -s 10.8.0.0/24 -o eth0 -j MASQUERADE
   * rc3.d services
   
 ## 2) China Access Point Setup
-## 3) Access Clients Setup
-
-# 4. Others:
-l2tp/IPSec quick guide
-https://github.com/sockeye44/instavpn
-https://raymii.org/s/tutorials/IPSEC_L2TP_vpn_with_Ubuntu_14.04.html#Configure_xl2tpd
-
-https://www.xelerance.com/
-
-Login:
-http://l2tp.armor5.cn:8080/
+* Install OpenVPN client and l2tp/IPSec server
+```Bash
 # Installation
-curl -sS https://raw.githubusercontent.com/sockeye44/instavpn/master/instavpn.sh | sudo bash
+apt-get install openvpn xl2tpd openswan
+```
+* OpenVPN Client configuration
+```Bash
+# Getting client CA(Certificate and key from Server side), such as client.crt, client.key
+# cat /etc/openvpn/client.conf
+client
+dev tun
+proto udp
+remote global_server_ip_or_domain_name 1194
+resolv-retry infinite
+nobind
+persist-key
+persist-tun
+ca ca.crt
+cert client.crt
+key client.key
+remote-cert-tls server
+comp-lzo
+verb 3
 
-# instavpn -h
-usage: Instavpn CLI [-h] {list,psk,user,stat,web} ...
+```
+* Start OpenVPN Client
+```Bash
+/usr/sbin/openvpn --cd /etc/openvpn --daemon --config /etc/openvpn/client.conf
+```
+* xl2tpd Server setup
+```Bash
+# cat /etc/xl2tpd/xl2tpd.conf
+[global]
+ipsec saref = yes
+saref refinfo = 30
 
-Instavpn CLI
+;debug avp = yes
+;debug network = yes
+;debug state = yes
+;debug tunnel = yes
 
-positional arguments:
-  {list,psk,user,stat,web}
-    list                Show all credentials
-    psk                 Get/set pre-shared key
-    user                Create, modify and delete users
-    stat                Bandwidth statistics
-    web                 Control web UI
+[lns default]
+ip range = 172.16.1.30-172.16.1.100
+local ip = 172.16.1.1
+refuse pap = yes
+require authentication = yes
+;ppp debug = yes
+pppoptfile = /etc/ppp/options.xl2tpd
 
+# cat /etc/ppp/options.xl2tpd
+require-mschap-v2
+ms-dns 8.8.8.8
+ms-dns 8.8.4.4
+auth
+#mtu 1200
+#mru 1000
+mtu 1400
+mru 1300
+crtscts
+hide-password
+modem
+name l2tpd
+proxyarp
+lcp-echo-interval 30
+lcp-echo-failure 4
+```
 
-Installation:
-1. Install OpenVPN: 
-sudo apt-get -y install openvpn bridge-utils
+* Adding new access account
+```Bash
+# cat /etc/ppp/chap-secrets
+dynamic_user l2tpd dynamic_password *
+fix_user l2tpd fix_password 172.16.1.130
+```
 
-2. Generating Certificates
-sudo apt-get -y easy-rsa
+* Start xl2tpd server
+```Bash
+service xl2tpd start
+```
 
+* Openswan setup
+```Bash
+# cat /etc/ipsec.conf
+version 2
 
+config setup
+    dumpdir=/var/run/pluto/
+    nat_traversal=yes
+    virtual_private=%v4:10.0.0.0/8,%v4:192.168.0.0/16,%v4:172.16.0.0/12,%v6:fd00::/8,%v6:fe80::/10
+    protostack=netkey
+    force_keepalive=yes
+    keep_alive=60
 
+conn L2TP-PSK-noNAT
+    authby=secret
+    pfs=no
+    auto=add
+    keyingtries=3
+    ikelifetime=8h
+    keylife=1h
+    ike=aes256-sha1,aes128-sha1,3des-sha1
+    phase2alg=aes256-sha1,aes128-sha1,3des-sha1
+    type=transport
+    left=172.31.*.*
+    leftprotoport=17/1701
+    right=%any
+    rightprotoport=17/%any
+    dpddelay=10
+    dpdtimeout=20
+    dpdaction=clear
 
+# cat /etc/ipsec.secrets
+172.31.*.* %any: PSK "test"
+
+```
+* Start openswan server
+```Bash
+service openswan start
+```
+* iptables and ip route rules
+```Bash
+iptables -t nat -A POSTROUTING -s 172.16.1.0/24 -o eth0 -j MASQUERADE
+iptables -t nat -A POSTROUTING -o eth+ -j SNAT --to-source 172.31.7.176
+iptables -t nat -A POSTROUTING -s 172.16.1.0/24 -o tun0 -j MASQUERADE
+```
+* Adding to OS bootstrap
+  * /etc/rc.local
+  * rc3.d services
+
+## 3) Access Clients Setup
+* Mobile IOS [TODO]
+* Mac OSX [TODO]
