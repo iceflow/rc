@@ -84,7 +84,7 @@ iptables -t nat -A POSTROUTING -s 10.8.0.0/24 -o eth0 -j MASQUERADE
 echo 1 > /proc/sys/net/ipv4/ip_forward
 ```
 * If using AWS
-  * Turn off EC2 networking src/dst check if using AWS
+  * Turn off EC2 networking src/dst check 
   * Allowing peer subnet access in the associated security group
 * Adding to OS bootstrap
   * /etc/rc.local
@@ -239,7 +239,7 @@ ip route flush cache
 echo 1 > /proc/sys/net/ipv4/ip_forward
 ```
 * If using AWS
-  * Turn off EC2 networking src/dst check if using AWS
+  * Turn off EC2 networking src/dst check 
   * Allowing mobile pool subnets in the associated Security Group
 
 * Adding to OS bootstrap
