@@ -1,4 +1,3 @@
-
 # Goal:
 
 Access Clients (l2tp/IPsec) <-> China Access Point <--- OpenVPN tun tunnel --> Global Access Point --> Global Resources
@@ -6,29 +5,47 @@ Access Clients (l2tp/IPsec) <-> China Access Point <--- OpenVPN tun tunnel --> G
 
 # China Access Point:
 OS: Ubuntu 14.04.3 LTS
+``` Bash
 1. xl2tpd
 2. openswan
 3. OpenVpn Client
 4. iptables rules: NAT policies
 5. route control scripts
+```
 
 # Global Access Point
 OS: Ubuntu 14.04.3 LTS
+``` Bash
 1. OpenVPN Server
 2. iptables rules: NAT plicy
+```
 
 # Ref:
 * xl2tpd:
-https://github.com/xelerance/xl2tpd
+	* https://github.com/xelerance/xl2tpd
 * OpenSwan:
-https://github.com/xelerance/openswan
+	* https://github.com/xelerance/openswan
 * OpenVPN:
-https://help.ubuntu.com/community/OpenVPN
-https://openvpn.net/index.php/open-source/documentation/howto.html
-https://openvpn.net/index.php/open-source/documentation/howto.html#examples
+	* https://help.ubuntu.com/community/OpenVPN
+	* https://openvpn.net/index.php/open-source/documentation/howto.html
+	* https://openvpn.net/index.php/open-source/documentation/howto.html#examples
 
 # Progress
 * Global Access Point Setup
+	* Install OpenVPN Server
+``` Bash
+# Installation
+apt-get install openvpn
+```
+	* Generate Server and Clients CAs
+		* ref: https://openvpn.net/index.php/open-source/documentation/howto.html#pki
+	* iptables NAT rules
+``` Bash
+iptables -t nat -A POSTROUTING -s 10.8.0.0/24 -o eth0 -j MASQUERADE
+```
+	* Adding to OS bootstrap
+		* /etc/rc.local
+		* rc3.d services
 * China Access Point Setup
 * Access Clients Setup
 
