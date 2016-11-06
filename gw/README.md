@@ -79,6 +79,13 @@ verb 3
 ``` Bash
 iptables -t nat -A POSTROUTING -s 10.8.0.0/24 -o eth0 -j MASQUERADE
 ```
+* turn on ip_foward 
+```Bash
+echo 1 > /proc/sys/net/ipv4/ip_forward
+```
+* If using AWS
+  * Turn off EC2 networking src/dst check if using AWS
+  * Allowing peer subnet access in the associated security group
 * Adding to OS bootstrap
   * /etc/rc.local
   * rc3.d services
@@ -227,6 +234,13 @@ ip route add default via 10.8.0.1 table 1
 ip rule add from 172.16.1.128/25 table 1
 ip route flush cache
 ```
+* turn on ip_foward 
+```Bash
+echo 1 > /proc/sys/net/ipv4/ip_forward
+```
+* If using AWS
+  * Turn off EC2 networking src/dst check if using AWS
+  * Allowing mobile pool subnets in the associated Security Group
 
 * Adding to OS bootstrap
   * /etc/rc.local
