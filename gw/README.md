@@ -85,7 +85,7 @@ echo 1 > /proc/sys/net/ipv4/ip_forward
 ```
 * If using AWS
   * Turn off EC2 networking src/dst check 
-  * Allowing peer subnet access in the associated security group
+  * Allowing tcp(1701), udp(500,4500) access in the associated security group
 * Adding to OS bootstrap
   * /etc/rc.local
   * rc3.d services
@@ -240,7 +240,7 @@ echo 1 > /proc/sys/net/ipv4/ip_forward
 ```
 * If using AWS
   * Turn off EC2 networking src/dst check 
-  * Allowing mobile pool subnets in the associated Security Group
+  * Allowing tcp(1194) access in the associated security group
 
 * Adding to OS bootstrap
   * /etc/rc.local
